@@ -2,30 +2,38 @@ namespace libs;
 
 public class GameObjectFactory : IGameObjectFactory
 {
-    public GameObject CreateGameObject(dynamic obj) {
+    // Creates a GameObject based on the provided dynamic object
+    public GameObject CreateGameObject(dynamic obj)
+    {
+        // Default GameObject initialization
+        GameObject newObj = new GameObject(); 
+        int type = obj.Type; 
 
-        GameObject newObj = new GameObject();
-        int type = obj.Type;
-
+        // Determine the type of GameObject to create
         switch (type)
         {
-            case (int) GameObjectType.Player:
-                newObj = Player.Instance;
+            case (int)GameObjectType.Player:
+                newObj = Player.Instance; 
                 newObj.PosX = obj.PosX;
                 newObj.PosY = obj.PosY;
                 break;
-            case (int) GameObjectType.Obstacle:
+
+            case (int)GameObjectType.Obstacle:
+                // Convert dynamic object to Obstacle
                 newObj = obj.ToObject<Obstacle>();
                 break;
-            case (int) GameObjectType.Box:
+
+            case (int)GameObjectType.Box:
+                // Convert dynamic object to Box
                 newObj = obj.ToObject<Box>();
                 break;
-            case (int) GameObjectType.Goal:
+
+            case (int)GameObjectType.Goal:
+                // Convert dynamic object to Goal
                 newObj = obj.ToObject<Goal>();
                 break;
         }
-
+        // Return the created GameObject
         return newObj;
     }
-
 }

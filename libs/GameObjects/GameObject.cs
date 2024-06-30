@@ -4,44 +4,52 @@ public class GameObject : IGameObject, IMovement
 {
     private char _charRepresentation = '#';
     private ConsoleColor _color;
-
     private int _posX;
     private int _posY;
-    
     private int _prevPosX;
     private int _prevPosY;
-
     private bool _isCollideable = false;
 
-    public GameObjectType Type;
+    public GameObjectType Type { get; set; }
 
-    public GameObject() {
-        this._posX = 5;
-        this._posY = 5;
-        this._color = ConsoleColor.Gray;
+    // Default constructor
+    public GameObject()
+    {
+        _posX = 5;
+        _posY = 5;
+        _color = ConsoleColor.Gray;
     }
 
-    public GameObject(int posX, int posY){
-        this._posX = posX;
-        this._posY = posY;
+    // Constructor with position
+    public GameObject(int posX, int posY)
+    {
+        _posX = posX;
+        _posY = posY;
     }
 
-    public GameObject(int posX, int posY, ConsoleColor color){
-        this._posX = posX;
-        this._posY = posY;
-        this._color = color;
+    // Constructor with position and color
+    public GameObject(int posX, int posY, ConsoleColor color)
+    {
+        _posX = posX;
+        _posY = posY;
+        _color = color;
     }
 
-    //Deep Copy created
-    public GameObject(GameObject gameObject){
-        this._posX = gameObject.PosX;
-        this._posY = gameObject.PosY;
-        this._color = gameObject.Color;
+    // Deep copy constructor
+    public GameObject(GameObject gameObject)
+    {
+        _posX = gameObject.PosX;
+        _posY = gameObject.PosY;
+        _color = gameObject.Color;
+        _charRepresentation = gameObject.CharRepresentation;
+        _isCollideable = gameObject.IsCollideable;
+        Type = gameObject.Type;
     }
 
+    // Properties
     public char CharRepresentation
     {
-        get { return _charRepresentation ; }
+        get { return _charRepresentation; }
         set { _charRepresentation = value; }
     }
 
@@ -62,34 +70,33 @@ public class GameObject : IGameObject, IMovement
         get { return _posY; }
         set { _posY = value; }
     }
+
     public bool IsCollideable
     {
         get { return _isCollideable; }
         set { _isCollideable = value; }
     }
 
+    public int GetPrevPosY() => _prevPosY;
+    public int GetPrevPosX() => _prevPosX;
 
-    public int GetPrevPosY() {
-        return _prevPosY;
-    }
-    
-    public int GetPrevPosX() {
-        return _prevPosX;
-    }
-    //TODO: move this to player/service
-    public virtual void Move(int dx, int dy) {
-        if(this.checkIfPossible(this._posX, this._posY, dx, dy)){
-            GameStateNode oldNode = GameEngine.Instance.CurrentGameState;
-            GameStateNode newNode = new GameStateNode(GameEngine.Instance.CurrentGameState);
-            newNode.PreviousNode = GameEngine.Instance.CurrentGameState;
-            newNode.GameVersion = GameEngine.Instance.GameVersion;
+    // Virtual move method to allow overriding
+    public virtual void Move(int dx, int dy)
+    {
+        if (CheckIfPossible(_posX, _posY, dx, dy))
+        {
+            var oldNode = GameEngine.Instance.CurrentGameState;
+            var newNode = new GameStateNode(GameEngine.Instance.CurrentGameState)
+            {
+                PreviousNode = GameEngine.Instance.CurrentGameState,
+                GameVersion = GameEngine.Instance.GameVersion
+            };
 
             GameEngine.Instance.CurrentGameState.NextNode = newNode;
             GameEngine.Instance.CurrentGameState = newNode;
-            //move box
-            if(this.pushBox(this._posX, this._posY,dx, dy)){
-                
-                
+
+            if (PushBox(_posX, _posY, dx, dy))
+            {
                 _prevPosX = _posX;
                 _prevPosY = _posY;
                 _posX += dx;
@@ -99,50 +106,44 @@ public class GameObject : IGameObject, IMovement
                 newNode.PlayerYPos = Player.Instance.PosY;
 
                 GameEngine.Instance.CurrentGameState.CurrentMap.GameFinished();
-
-            }else{
-                GameEngine.Instance.CurrentGameState = oldNode; 
+            }
+            else
+            {
+                GameEngine.Instance.CurrentGameState = oldNode;
             }
         }
     }
 
+    // Checks if the new position is possible
+    public bool CheckIfPossible(int currentX, int currentY, int dx, int dy)
+    {
+        var gameObjects = GameEngine.Instance.GetGameObjects();
 
-    public bool checkIfPossible(int currentX, int currentY, int newPosX, int newPosY){
-        List<GameObject> gameObjects = GameEngine.Instance.GetGameObjects();
-
-        for(int i = 0; i < gameObjects.Count; i++){
-            if(gameObjects[i].IsCollideable && gameObjects[i].PosX == currentX + newPosX &&
-             gameObjects[i].PosY == currentY + newPosY){
-                return false;
-            } 
-        }
-        return true;
+        return !gameObjects.Any(obj => obj.IsCollideable && obj.PosX == currentX + dx && obj.PosY == currentY + dy);
     }
 
-    public bool checkIfNoBox(int currentX, int currentY, int newPosX, int newPosY){
-         List<GameObject> gameObjects = GameEngine.Instance.GetGameObjects();
+    // Checks if there is no box in the new position
+    public bool CheckIfNoBox(int currentX, int currentY, int dx, int dy)
+    {
+        var gameObjects = GameEngine.Instance.GetGameObjects();
 
-        for(int i = 0; i < gameObjects.Count; i++){
-            if(gameObjects[i].Type == GameObjectType.Box && gameObjects[i].PosX == currentX + newPosX &&
-             gameObjects[i].PosY == currentY + newPosY){
-                return false;
-            } 
-        }
-        return true;
+        return !gameObjects.Any(obj => obj.Type == GameObjectType.Box && obj.PosX == currentX + dx && obj.PosY == currentY + dy);
     }
 
-    //refacture with move()
-    public bool pushBox(int currentX, int currentY, int newPosX, int newPosY){
-        List<GameObject> gameObjects = GameEngine.Instance.GetGameObjects();
-        for(int i = 0; i < gameObjects.Count; i++){
-            if(gameObjects[i].Type == GameObjectType.Box && gameObjects[i].PosX == currentX + newPosX &&
-             gameObjects[i].PosY == currentY + newPosY){
-                if(checkIfPossible(gameObjects[i]._posX, gameObjects[i]._posY, newPosX, newPosY)){
-                    if(checkIfNoBox(gameObjects[i]._posX, gameObjects[i]._posY, newPosX, newPosY)){
-                    gameObjects[i].PosX += newPosX;
-                    gameObjects[i].PosY += newPosY;
+    // Pushes the box if possible
+    public bool PushBox(int currentX, int currentY, int dx, int dy)
+    {
+        var gameObjects = GameEngine.Instance.GetGameObjects();
+
+        foreach (var obj in gameObjects)
+        {
+            if (obj.Type == GameObjectType.Box && obj.PosX == currentX + dx && obj.PosY == currentY + dy)
+            {
+                if (CheckIfPossible(obj.PosX, obj.PosY, dx, dy) && CheckIfNoBox(obj.PosX, obj.PosY, dx, dy))
+                {
+                    obj.PosX += dx;
+                    obj.PosY += dy;
                     return true;
-                    }
                 }
                 return false;
             }

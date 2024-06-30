@@ -1,31 +1,33 @@
 namespace libs;
 
+// Sealed Player class inheriting from GameObject to prevent further inheritance
 public sealed class Player : GameObject
 {
-    private Direction direction;
-    public static Player instance;
-    private static readonly object lockObject = new object();
+    private Direction direction; 
+    private static Player instance; 
+    private static readonly object lockObject = new object(); // Lock object for thread safety
 
+    // Private constructor to prevent direct instantiation
     private Player() : base()
     {
-        Type = GameObjectType.Player;
+        Type = GameObjectType.Player; 
         CharRepresentation = '^';
         Color = ConsoleColor.DarkYellow;
         direction = Direction.North;
     }
 
+    // Public property to access the singleton instance
     public static Player Instance
     {
         get
         {
             if (instance == null)
             {
-                lock (lockObject)
+                lock (lockObject) // Ensure thread safety
                 {
-
                     if (instance == null)
                     {
-                        instance = new Player();
+                        instance = new Player(); // Instantiate the singleton instance
                     }
                 }
             }
@@ -33,39 +35,45 @@ public sealed class Player : GameObject
         }
     }
 
-    public override void Move(int dx, int dy){
-        changePlayerSprite(dx, dy);
+    // Override the Move method to change the player sprite based on movement
+    public override void Move(int dx, int dy)
+    {
+        ChangePlayerSprite(dx, dy);
         base.Move(dx, dy);
     }
 
-    public void changePlayerSprite(int dx, int dy){
-        int[] move = [dx,dy];
-        switch(move){
-            case [0,1]:
-                this.CharRepresentation = 'v';
+    // Change the player sprite and direction based on movement
+    public void ChangePlayerSprite(int dx, int dy)
+    {
+        int[] move = new int[] { dx, dy };
+        switch (move)
+        {
+            case int[] when move.SequenceEqual(new int[] { 0, 1 }):
+                CharRepresentation = 'v'; 
                 direction = Direction.South;
                 break;
-            case [1,0]:
-                this.CharRepresentation = '>';
+            case int[] when move.SequenceEqual(new int[] { 1, 0 }):
+                CharRepresentation = '>';
                 direction = Direction.East;
                 break;
-            case [0,-1]:
-                this.CharRepresentation = '^';
+            case int[] when move.SequenceEqual(new int[] { 0, -1 }):
+                CharRepresentation = '^';
                 direction = Direction.North;
                 break;
-            case [-1,0]:
-                this.CharRepresentation = '<';
+            case int[] when move.SequenceEqual(new int[] { -1, 0 }):
+                CharRepresentation = '<';
                 direction = Direction.West;
                 break;
             default:
-                this.CharRepresentation = '^';
+                CharRepresentation = '^';
                 direction = Direction.North;
                 break;
         }
     }
 
-    public void Interact(){
-       //for now
+    // Placeholder method for player interactions
+    public void Interact()
+    {
+        // Interaction logic to be implemented
     }
-
 }

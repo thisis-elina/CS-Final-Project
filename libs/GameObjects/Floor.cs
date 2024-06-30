@@ -1,13 +1,16 @@
 namespace libs;
 
 public class Floor : GameObject {
-
-    public Floor () : base(){
+    // Parameterless constructor that initializes a new Floor object
+    public Floor () : base()
+    {
         Type = GameObjectType.Floor;
         CharRepresentation = '.';
     }
 
-    public Floor(GameObject gameObject): base(gameObject){
+    // Constructor that initializes a Floor object from an existing GameObject
+    public Floor(GameObject gameObject): base(gameObject)
+    {
         Type = GameObjectType.Floor;
         CharRepresentation = '.';
     }
