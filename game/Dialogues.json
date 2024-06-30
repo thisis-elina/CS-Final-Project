@@ -1,0 +1,60 @@
+{
+  "Dialogues": [
+    {
+      "Id": 0,
+      "Title": "Welcome",
+      "DialogueText": "Welcome to Sokoban! Use the arrow keys ⬆️ ⬇️ ⬅️ ➡️  to move your character. [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 1,
+      "PreivousDialogID": null
+    },
+    {
+      "Id": 1,
+      "Title": "Goal", 
+      "DialogueText": "Push the boxes onto the marked goals to win. 📦  [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 2,
+      "PreivousDialogID": 0
+    },
+    {
+      "Id": 2,
+      "Title": "Tips", 
+      "DialogueText": "Be careful not to push boxes into corners where they can't be moved. 🚫  [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 3,
+      "PreivousDialogID": 1
+    },
+    {
+      "Id": 3,
+      "Title": "Undo/Redo",
+      "DialogueText": "Use Ctrl + Z to undo a move ↩️  and Ctrl + Y to redo a move ↪️ . [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 4,
+      "PreivousDialogID": 2
+    },
+    {
+      "Id": 4,
+      "Title": "Save",
+      "DialogueText": "Press Ctrl + S to save your progress 💾 . [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 5,
+      "PreivousDialogID": 3
+    },
+    {
+      "Id": 5,
+      "Title": "Reload",
+      "DialogueText": "Press Ctrl + R to reload the current level 🔄 . [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 6,
+      "PreivousDialogID": 4
+    },
+    {
+      "Id": 6,
+      "Title": "Exit",
+      "DialogueText": "Press Ctrl + X to close the game ❌ . [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": 7,
+      "PreivousDialogID": 5
+    },
+    {
+      "Id": 7,
+      "Title": "Good Luck",
+      "DialogueText": "Good Luck and we hope you have FUN 🎉  [Press 'Space' to proceed] ⏩ ",
+      "NextDialogID": null,
+      "PreivousDialogID": 6
+    }
+  ]
+}
