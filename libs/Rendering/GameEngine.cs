@@ -6,11 +6,13 @@ namespace libs;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 
+// The GameEngine class is responsible for managing the game state and the game loop.
 public sealed class GameEngine
 {
-
+    // Private field to store the current game state.
     private GameEngineState _gameState;
 
+    // Public property to access the current game state.
     public GameEngineState GameState
     {
         get { return _gameState; }
@@ -71,6 +73,7 @@ public sealed class GameEngine
         set { _isGameComplete = value; }
     }
 
+    // Private constructor to initialize properties and instances.
     private GameEngine()
     {
         //INIT PROPS HERE IF NEEDED
@@ -84,16 +87,19 @@ public sealed class GameEngine
 
     private GameObject? _focusedObject;
 
+    // Method to get the current map.
     public Map GetMap()
     {
         return _currentGameState.CurrentMap;
     }
-
+    
+    // Method to get the list of current game objects.
     public List<GameObject> GetGameObjects()
     {
         return _currentGameState.CurrentGameObjects;
     }
 
+    // Method to set up the game.
     public void Setup()
     {
 
@@ -137,7 +143,8 @@ public sealed class GameEngine
             _currentGameState.PlayerYPos = _focusedObject.PosY;
         }
     }
-
+    
+    // Method to render the game screen.
     public void Render()
     {
 
@@ -168,12 +175,13 @@ public sealed class GameEngine
             LoadNextLevel();
         }
     }
-
+    
+    // Method to display the tutorial screen.
     private void DisplayTutorialScreen(){
         dialogueBox.RenderDialogue();
     }
 
-
+    // Method to display the start screen.
     public void DisplayStartScreen()
     {
         Console.WriteLine("Ⓢ ⓞ ⓚ ⓞ ⓑ ⓐ ⓝ");
@@ -187,6 +195,7 @@ public sealed class GameEngine
         Console.WriteLine("[X] Exit Game");
     }
 
+    // Method to check if a saved game is available.
     public bool IsSavedGameAvailable()
     {
         try
@@ -205,6 +214,7 @@ public sealed class GameEngine
         }
     }
 
+    // Method to display the game screen.
     public void DisplayGame()
     {
 
@@ -234,16 +244,19 @@ public sealed class GameEngine
         return gameObjectFactory.CreateGameObject(obj);
     }
 
+    // Method to add a GameObject to the current game objects list.
     public void AddGameObject(GameObject gameObject)
     {
         _currentGameState.CurrentGameObjects.Add(gameObject);
     }
 
+    // Method to add a GameObject to a specified list.
     public void AddGameObjectToList(GameObject gameObject, List<GameObject> list)
     {
         list.Add(gameObject);
     }
-
+    
+    // Method to place game objects on the map.
     private void PlaceGameObjects()
     {
 
@@ -253,6 +266,7 @@ public sealed class GameEngine
         });
     }
 
+    // Method to draw a game object on the console.
     private void DrawObject(GameObject gameObject)
     {
 
@@ -270,6 +284,7 @@ public sealed class GameEngine
         }
     }
 
+    // Method to undo the last move.
     public void UndoMove()
     {
         if (_currentGameState.PreviousNode == null)
@@ -288,6 +303,7 @@ public sealed class GameEngine
         Render();
     }
 
+    // Method to redo the last undone move.
     public void RedoMove()
     {
         if (_currentGameState.NextNode == null)
@@ -306,11 +322,13 @@ public sealed class GameEngine
 
     }
 
+    // Method to save the game state to a JSON file.
     public void SaveGameToJson()
     {
         FileHandler.SaveGameToJson(_currentGameState);
     }
 
+    // Method to load the game state from a JSON file.
     public void LoadGameFromJson()
     {
         _gameState = GameEngineState.Playing;
@@ -332,6 +350,7 @@ public sealed class GameEngine
         }
     }
 
+    // Method to load the next level.
     public void LoadNextLevel()
     {
         int currentIndex = _currentGameState.CurrentMapIndex;
@@ -365,14 +384,17 @@ public sealed class GameEngine
         }
     }
 
+    // Method to start the tutorial.
     public void StartTutorial(){
         _gameState = GameEngineState.Tutorial;
     }
 
+    // Method to start the game.
     public void StartGame(){
         _gameState = GameEngineState.Playing;
     }
 
+    // Method to proceed to the next dialogue.
     public void ProceedDialogue(){
         
         if(!dialogueBox.ProceedDialogue()){

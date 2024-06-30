@@ -3,8 +3,11 @@ using Newtonsoft.Json;
 
 public class Map {
     
+    // Represents the visual layer of the map.
     [JsonProperty]
     private char[,] RepresentationalLayer;
+    
+    // Represents the game object layer of the map.
     [JsonProperty]
     private GameObject?[,] GameObjectLayer;
 
@@ -13,6 +16,7 @@ public class Map {
     [JsonProperty]
     private int _mapHeight;
 
+    // Default constructor initializes the map with default size.
     public Map () {
         _mapWidth = 30;
         _mapHeight = 8;
@@ -20,13 +24,15 @@ public class Map {
         GameObjectLayer = new GameObject[_mapHeight, _mapWidth];
     }
 
+    // Parameterized constructor initializes the map with given width and height.
     public Map (int width, int height) {
         _mapWidth = width;
         _mapHeight = height;
         RepresentationalLayer = new char[_mapHeight, _mapWidth];
         GameObjectLayer = new GameObject[_mapHeight, _mapWidth];
     }
-
+    
+    // Copy constructor creates a deep copy of the given map.
     public Map (Map map){
         _mapWidth = map.MapWidth;
         _mapHeight = map.MapHeight;
@@ -35,6 +41,7 @@ public class Map {
     }
 
 
+    // Initializes the map by filling it with default game objects.
     public void Initialize()
     {
         RepresentationalLayer = new char[_mapHeight, _mapWidth];
@@ -63,18 +70,19 @@ public class Map {
         set { _mapHeight = value; Initialize();} // Setter
     }
 
+    // Method to get a game object at a specific position.
     public GameObject Get(int x, int y){
         return GameObjectLayer[x, y];
     }
 
+    // Method to set a game object on the map.
     public void Set(GameObject gameObject){
         int posY = gameObject.PosY;
         int posX = gameObject.PosX;
         int prevPosY = gameObject.GetPrevPosY();
         int prevPosX = gameObject.GetPrevPosX();
     
-        //Map
-
+        // Clear previous position if it was within bounds.
         if (prevPosX >= 0 && prevPosX < _mapWidth &&
                 prevPosY >= 0 && prevPosY < _mapHeight)
         {
@@ -84,6 +92,7 @@ public class Map {
             
         }
         
+        // Set new position if it is within bounds.
         if (posX >= 0 && posX < _mapWidth &&
                 posY >= 0 && posY < _mapHeight)
         {
@@ -92,6 +101,7 @@ public class Map {
         }
     }
 
+    // Method to create a deep copy of the game object layer.
     public GameObject?[,] DeepCopyGameObjectLayer(){
         
         GameObject?[,] copiedGameObjectLayer = new GameObject[_mapHeight, _mapWidth];
@@ -100,8 +110,8 @@ public class Map {
         {
             for (int j = 0; j < GameObjectLayer.GetLength(1); j++)
             {
-
-
+                
+            // Create a deep copy of each game object based on its type.
             switch (GameObjectLayer[i, j].Type)
             {
                 case GameObjectType.Player:
@@ -126,6 +136,7 @@ public class Map {
         return copiedGameObjectLayer;
     }
 
+    // Method to create a deep copy of the representational layer.
     public char[,] DeepCopyRepresentationalLayer(){
 
         char[,] copiedPresentationLayer = new char[_mapHeight, _mapWidth];
@@ -140,12 +151,14 @@ public class Map {
         return copiedPresentationLayer;
     }
 
+    // Method to check if the game is finished.
     public bool GameFinished(){
         List<GameObject> _boxes = GameEngine.Instance.GetGameObjects().FindAll(e=>e.Type == GameObjectType.Box);
         List<GameObject> _goals = GameEngine.Instance.GetGameObjects().FindAll(e=>e.Type == GameObjectType.Goal);
 
         int counter = 0;
 
+        // Check if all boxes are on goals.
         foreach(GameObject box in _boxes){
             foreach(GameObject goal in _goals){
                 if((box.PosX == goal.PosX) && (box.PosY == goal.PosY)){
@@ -153,7 +166,7 @@ public class Map {
                 }
             }
         }
-
+        // If all goals have boxes, the game is finished.
         if(counter == _goals.Count){
             return true;
         }
@@ -161,6 +174,7 @@ public class Map {
         return false;     
     }
 
+    // Method to update player instances in the map to the singleton instance.
     public void UpdatePlayerInstancesToSingleton()
         {
             for (int y = 0; y < _mapHeight; y++)
@@ -174,6 +188,4 @@ public class Map {
                 }
             }
         }
-
-
 }
