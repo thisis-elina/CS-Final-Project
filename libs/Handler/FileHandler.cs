@@ -7,22 +7,25 @@ using Newtonsoft.Json;
 
 public static class FileHandler
 {
-    private static string filePath;
-    private readonly static string envVar = "GAME_SETUP_PATH";
+    private static string filePath; 
+    private readonly static string envVar = "GAME_SETUP_PATH"; 
 
+    // Static constructor to initialize the file path
     static FileHandler()
     {
         Initialize();
     }
 
+    // Initializes the file path from the environment variable
     private static void Initialize()
     {
         if (Environment.GetEnvironmentVariable(envVar) != null)
         {
             filePath = Environment.GetEnvironmentVariable(envVar);
-        };
+        }
     }
 
+    // Reads JSON content from the file and returns the deserialized dynamic object
     public static dynamic ReadJson()
     {
         if (string.IsNullOrEmpty(filePath))
@@ -32,8 +35,8 @@ public static class FileHandler
 
         try
         {
-            string jsonContent = File.ReadAllText(filePath);
-            dynamic jsonData = JsonConvert.DeserializeObject(jsonContent);
+            string jsonContent = File.ReadAllText(filePath); // Read the file content
+            dynamic jsonData = JsonConvert.DeserializeObject(jsonContent); // Deserialize the JSON content
             return jsonData;
         }
         catch (FileNotFoundException)
@@ -46,22 +49,24 @@ public static class FileHandler
         }
     }
 
+    // Saves the current game state to a JSON file
     public static void SaveGameToJson(GameStateNode _currentSate)
     {
         var settings = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects
         };
-        string jsonString = JsonConvert.SerializeObject(_currentSate, settings);
-        File.WriteAllText($@"SavedGame.json", jsonString);
+        string jsonString = JsonConvert.SerializeObject(_currentSate, settings); // Serialize the game state
+        File.WriteAllText($@"SavedGame.json", jsonString); // Write the JSON string to a file
     }
 
+    // Loads the game state from a JSON file
     public static GameStateNode LoadGameFromJson()
     {
         try
         {
-            string jsonContent = File.ReadAllText($@"SavedGame.json");
-            GameStateNode newGameStateNode = JsonConvert.DeserializeObject<GameStateNode>(jsonContent);
+            string jsonContent = File.ReadAllText($@"SavedGame.json"); // Read the file content
+            GameStateNode newGameStateNode = JsonConvert.DeserializeObject<GameStateNode>(jsonContent); // Deserialize the JSON content
             return newGameStateNode;
         }
         catch (FileNotFoundException)
@@ -72,15 +77,15 @@ public static class FileHandler
         {
             throw new Exception($"Error reading JSON file: {ex.Message}");
         }
-        return null;
     }
 
+    // Loads dialogues from a JSON file
     public static RootObject LoadDialogue()
     {
         try
         {
-            string jsonContent = File.ReadAllText("Dialogues.json");
-            RootObject jsonData = JsonConvert.DeserializeObject<RootObject>(jsonContent);
+            string jsonContent = File.ReadAllText("Dialogues.json"); // Read the file content
+            RootObject jsonData = JsonConvert.DeserializeObject<RootObject>(jsonContent); // Deserialize the JSON content
             return jsonData;
         }
         catch (FileNotFoundException)

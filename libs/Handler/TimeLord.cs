@@ -1,56 +1,70 @@
 using libs;
 
-public sealed class TimeLord {
+public sealed class TimeLord
+{
+    private DateTime _startingTimestamp; // Timestamp when the timer started or was reset
+    private double _remainingTime; // Remaining time in seconds
 
-
-    private DateTime _startingTimestamp;
-
-    private double _remainingTime;
-
+    // Singleton instance
     public static TimeLord instance;
 
-    public static TimeLord Instance{
-        get{ 
-            if(instance == null){
-                instance = new TimeLord();
+    // Public property to access the singleton instance
+    public static TimeLord Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new TimeLord(); // Initialize the instance if not already done
             }
             return instance;
         }
     }
 
-    private TimeLord(){
-        _startingTimestamp = DateTime.Now;
-        //TODO: Change to GameSettings.JSON page
-        _remainingTime = 100;
+    // Private constructor to prevent direct instantiation
+    private TimeLord()
+    {
+        _startingTimestamp = DateTime.Now; 
+        _remainingTime = 100; 
     }
 
-    public void SubtractTime(){
-
-        if(GameEngine.Instance.GameState != GameEngineState.Playing){
+    // Method to subtract time based on the elapsed time since the last call
+    public void SubtractTime()
+    {
+        if (GameEngine.Instance.GameState != GameEngineState.Playing)
+        {
+            // Reset the starting timestamp if the game is not in the playing state
             _startingTimestamp = DateTime.Now;
             return;
         }
 
-        double difference = System.Math.Abs((DateTime.Now - _startingTimestamp).TotalSeconds);
-        _startingTimestamp = DateTime.Now;
+        // Calculate the difference in seconds between now and the last timestamp
+        double difference = Math.Abs((DateTime.Now - _startingTimestamp).TotalSeconds);
+        _startingTimestamp = DateTime.Now; 
         _remainingTime -= difference;
 
-        if( _remainingTime <= 0){
+        if (_remainingTime <= 0)
+        {
+            // Ensure remaining time does not go below zero
             _remainingTime = 0;
         }
-
     }
 
-    public void SetTime(double time){
+    // Method to set the remaining time
+    public void SetTime(double time)
+    {
         _remainingTime = time;
     }
 
-    public double GetTime(){
-        return Math.Round(_remainingTime, 2);;
+    // Method to get the remaining time, rounded to two decimal places
+    public double GetTime()
+    {
+        return Math.Round(_remainingTime, 2);
     }
 
-    public bool HasTimeRunOut(){
+    // Method to check if the time has run out
+    public bool HasTimeRunOut()
+    {
         return _remainingTime <= 0;
     }
-
 }
