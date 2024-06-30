@@ -94,6 +94,10 @@ public sealed class InputHandler{
                         Console.WriteLine("BYE BYE");
                         System.Environment.Exit(1);
                     }
+                    if ((keyInfo.Modifiers & ConsoleModifiers.Control) == ConsoleModifiers.Control) {
+                        Console.WriteLine("BYE BYE");
+                        System.Environment.Exit(1);
+                    }
                     break;
                 case ConsoleKey.R:
                 if(engine.GameState != GameEngineState.Playing){
